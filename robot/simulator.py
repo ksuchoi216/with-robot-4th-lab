@@ -76,7 +76,7 @@ class RobotConfig:
     CAM_AZIMUTH = 135
     CAM_ELEVATION = -25
 
-    MOBILE_INIT_POSITION = np.array([1.8, -3.45, 0.0])
+    MOBILE_INIT_POSITION = np.array([-1.0, 0.0, np.pi])
     ARM_INIT_POSITION = np.array([-0.0114, -1.0319,  0.0488, -2.2575,  0.0673,  1.5234, 0.6759])
     GRIPPER_INIT_WIDTH = 0.08
 
