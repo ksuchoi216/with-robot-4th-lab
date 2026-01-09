@@ -1,10 +1,7 @@
 from pprint import pprint
 
 import requests
-
-from ..common.logger import get_logger
-
-logger = get_logger(__name__)
+from loguru import logger
 
 
 class TaskExecutor:
@@ -17,8 +14,12 @@ class TaskExecutor:
         task_sequence = []
 
         for task_output in task_outputs:
-            subgoal = task_output["subgoal"]
-            tasks = task_output["tasks"]
+            subgoal = task_output.get("subgoal", None)
+            tasks = task_output.get("tasks", None)
+            if subgoal is None or tasks is None:
+                raise ValueError("Invalid task output format.")
+            logger.info(f"Subgoal: {subgoal}")
+            logger.info(f"Tasks: {tasks}")
             for task in tasks:
                 task_sequence.append(task)
 
@@ -71,12 +72,12 @@ result = place_object({pos}, 0.1, 0.2)
         }
         response = requests.post(f"{self.url}/send_action", json=payload)
         objects = response.json()["result"]
-        print(objects)
+        # print(objects)
 
     def execute(self, task_outputs):
         task_sequence = self._make_task_sequence(task_outputs)
         logger.info("Executing task sequence:")
-        pprint(task_sequence)
+        # pprint(task_sequence)
 
         results = []
         for task in task_sequence:

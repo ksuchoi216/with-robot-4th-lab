@@ -8,11 +8,7 @@ from typing import Any, Dict
 
 import pandas as pd
 import yaml
-
-from ..common.errors import UtilsValidationError
-from ..common.logger import get_logger
-
-logger = get_logger(__name__)
+from loguru import logger
 
 
 def load(path) -> Any:
@@ -34,14 +30,11 @@ def load(path) -> Any:
             with open(path, "rb") as f:
                 loaded_file = pickle.load(f)
         else:
-            raise UtilsValidationError(
-                f"Unsupported file extension: {extension}",
-                details={"extension": extension},
-            )
+            raise ValueError(f"Unsupported file extension: {extension}")
 
         return loaded_file
     except Exception as e:
-        logger.exception("Error loading file from %s", path)
+        logger.exception("Error loading file from {}", path)
         raise FileExistsError(f"Error loading file from {path}: {e}") from e
 
 
@@ -62,10 +55,7 @@ def save(data: Any, path: str):
                 with open(path, "w", encoding="utf-8-sig") as f:
                     data.to_csv(f, index=False, encoding="utf-8-sig")
             else:
-                raise UtilsValidationError(
-                    "Data must be a pandas DataFrame for CSV format.",
-                    details={"expected_type": "pandas.DataFrame"},
-                )
+                raise ValueError("Data must be a pandas DataFrame for CSV format.")
         elif extension == "json":
             with open(path, "w", encoding="utf-8-sig") as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
@@ -76,9 +66,6 @@ def save(data: Any, path: str):
             with open(path, "wb") as f:
                 pickle.dump(data, f)
         else:
-            raise UtilsValidationError(
-                f"Unsupported file extension: {extension}",
-                details={"extension": extension},
-            )
+            raise ValueError(f"Unsupported file extension: {extension}")
     except Exception as e:
-        logger.exception("Error saving file to %s", path)
+        logger.exception("Error saving file to {}", path)
